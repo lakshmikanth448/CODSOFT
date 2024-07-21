@@ -1,0 +1,51 @@
+import java.util.*;
+public class GenerateRandom {
+	private static void play(int num) {
+		int count = 0;
+		Scanner s=new Scanner(System.in);
+		while(count<3){		
+        	System.out.println("enter a num to guess");
+        	int a=s.nextInt();
+            count++;
+            if (a > num) {
+                System.out.println("too high");
+            } else if (a < num) {
+                System.out.println("too low");
+            } else {
+                System.out.println("you guessed correctly");
+                if(count==1) {
+                	System.out.println("score is high");
+                }else if(count==2) {
+                	System.out.println("score is medium");}
+                else {
+                	System.out.println("score is poor");
+            }
+                break;
+            }
+            if(count==3) {
+            	System.out.println("reached the limit");     	
+            }       
+            }
+		}
+
+    public static void main(String[] args) {
+        Random r = new Random();   
+        Scanner s = new Scanner(System.in);
+        int num = r.nextInt(100); 
+        play(num);
+        while(true) { 
+        System.out.println("to retry enter 1 and to exit enter 2");
+        int x=s.nextInt();
+        switch(x){
+        case 1:
+        	play(num);
+        	
+        	break;
+        case 2:
+        	System.out.println("exited....");
+            System.exit(0);
+        	break;
+        }       
+	}
+    }
+    }
