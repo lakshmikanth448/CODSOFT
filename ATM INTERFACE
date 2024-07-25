@@ -1,0 +1,57 @@
+import java.util.Scanner;
+public class BankAccount {
+	public static int balance=1200;
+	public int balance() {
+		return balance;
+	}
+}
+class ATM extends BankAccount  {
+	public static void withdraw(int Amount) {
+		if(BankAccount.balance>Amount) {
+		BankAccount.balance=BankAccount.balance-Amount;
+		System.out.println(Amount+" Amount is withdrawn");
+		}else {
+			System.out.println("insuffient funds");
+		}
+	}
+    public static void deposit(int Amount) {
+    	if(Amount>0) {
+    	BankAccount.balance=BankAccount.balance+Amount;
+    	System.out.println(Amount+" is deposited");
+    	
+	}else {
+		System.out.println("0 or less than amount cant be deposited");
+	}
+    }
+    public static void checkBalance() {
+    	System.out.println("the cureent balanace is: "+BankAccount.balance);
+    }
+
+	public static void main(String[] args) {
+		Scanner s=new Scanner(System.in);
+		xyz:while(true) {
+		System.out.println("Enter choice \n1.withdraw  \n2.deposit  \n3.check balanace");
+		int x=s.nextInt();
+		switch(x) {
+		case 1:
+			System.out.println("Enter Amount");
+			int Amount=s.nextInt();
+			withdraw(Amount);
+			break;
+		case 2:
+			System.out.println("Enter Amount");
+			int Amount1=s.nextInt();
+			deposit(Amount1);
+			break;
+		case 3:
+			checkBalance();
+			break;
+		default:
+			System.out.println("invalid choice");
+			break xyz;
+		}
+		
+	}
+
+}
+	}
