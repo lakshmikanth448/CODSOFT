@@ -1,0 +1,217 @@
+import java.util.*;
+
+class Course {
+    private String courseId;
+    private String title;
+    private String description;
+    private int capacity;
+    private int enrolled;
+
+    public Course(String courseId, String title, String description, int capacity) {
+        this.courseId = courseId;
+        this.title = title;
+        this.description = description;
+        this.capacity = capacity;
+        this.enrolled = 0;
+    }
+
+    // Getters and Setters
+    public String getCourseId() { return courseId; }
+    public String getTitle() { return title; }
+    public String getDescription() { return description; }
+    public int getCapacity() { return capacity; }
+    public int getEnrolled() { return enrolled; }
+    
+    public void enroll() { if (enrolled < capacity) enrolled++; }
+    public void drop() { if (enrolled > 0) enrolled--; }
+    
+    public int getAvailableSlots() { return capacity - enrolled; }
+}
+
+class Student {
+    private String studentId;
+    private String name;
+    private List<String> registeredCourses;
+
+    public Student(String studentId, String name) {
+        this.studentId = studentId;
+        this.name = name;
+        this.registeredCourses = new ArrayList<>();
+    }
+
+    // Getters and Setters
+    public String getStudentId() { return studentId; }
+    public String getName() { return name; }
+    public List<String> getRegisteredCourses() { return registeredCourses; }
+
+    public void registerCourse(String courseId) { registeredCourses.add(courseId); }
+    public void dropCourse(String courseId) { registeredCourses.remove(courseId); }
+}
+
+class CourseManager {
+    private Map<String, Course> courses;
+
+    public CourseManager() {
+        courses = new HashMap<>();
+    }
+
+    public void addCourse(Course course) {
+        courses.put(course.getCourseId(), course);
+    }
+
+    public Course getCourse(String courseId) {
+        return courses.get(courseId);
+    }
+
+    public void listCourses() {
+        for (Course course : courses.values()) {
+            System.out.println("Course ID: " + course.getCourseId());
+            System.out.println("Title: " + course.getTitle());
+            System.out.println("Description: " + course.getDescription());
+            System.out.println("Capacity: " + course.getCapacity());
+            System.out.println("Available Slots: " + course.getAvailableSlots());
+            System.out.println();
+        }
+    }
+}
+
+class StudentManager {
+    private Map<String, Student> students;
+    private CourseManager courseManager;
+
+    public StudentManager(CourseManager courseManager) {
+        this.students = new HashMap<>();
+        this.courseManager = courseManager;
+    }
+
+    public void addStudent(Student student) {
+        students.put(student.getStudentId(), student);
+    }
+
+    public Student getStudent(String studentId) {
+        return students.get(studentId);
+    }
+
+    public void registerCourse(String studentId, String courseId) {
+        Student student = getStudent(studentId);
+        Course course = courseManager.getCourse(courseId);
+
+        if (student != null && course != null) {
+            if (course.getAvailableSlots() > 0) {
+                student.registerCourse(courseId);
+                course.enroll();
+                System.out.println("Registered for course: " + courseId);
+            } else {
+                System.out.println("No available slots for course: " + courseId);
+            }
+        } else {
+            System.out.println("Invalid student or course ID.");
+        }
+    }
+
+    public void dropCourse(String studentId, String courseId) {
+        Student student = getStudent(studentId);
+        Course course = courseManager.getCourse(courseId);
+
+        if (student != null && course != null) {
+            if (student.getRegisteredCourses().contains(courseId)) {
+                student.dropCourse(courseId);
+                course.drop();
+                System.out.println("Dropped course: " + courseId);
+            } else {
+                System.out.println("Student not registered for course: " + courseId);
+            }
+        } else {
+            System.out.println("Invalid student or course ID.");
+        }
+    }
+}
+
+public class Main {
+    private static Scanner scanner = new Scanner(System.in);
+    private static CourseManager courseManager = new CourseManager();
+    private static StudentManager studentManager = new StudentManager(courseManager);
+
+    public static void main(String[] args) {
+        while (true) {
+            System.out.println("\nMenu:");
+            System.out.println("1. Add Course");
+            System.out.println("2. List Courses");
+            System.out.println("3. Add Student");
+            System.out.println("4. Register Student for Course");
+            System.out.println("5. Drop Course for Student");
+            System.out.println("6. Exit");
+            System.out.print("Enter your choice: ");
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // Consume newline
+
+            switch (choice) {
+                case 1:
+                    addCourse();
+                    break;
+                case 2:
+                    courseManager.listCourses();
+                    break;
+                case 3:
+                    addStudent();
+                    break;
+                case 4:
+                    registerStudentForCourse();
+                    break;
+                case 5:
+                    dropCourseForStudent();
+                    break;
+                case 6:
+                    System.out.println("Exiting...");
+                    System.exit(0);
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        }
+    }
+
+    private static void addCourse() {
+        System.out.print("Enter course ID: ");
+        String courseId = scanner.nextLine();
+        System.out.print("Enter course title: ");
+        String title = scanner.nextLine();
+        System.out.print("Enter course description: ");
+        String description = scanner.nextLine();
+        System.out.print("Enter course capacity: ");
+        int capacity = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+
+        Course course = new Course(courseId, title, description, capacity);
+        courseManager.addCourse(course);
+        System.out.println("Course added successfully.");
+    }
+
+    private static void addStudent() {
+        System.out.print("Enter student ID: ");
+        String studentId = scanner.nextLine();
+        System.out.print("Enter student name: ");
+        String name = scanner.nextLine();
+
+        Student student = new Student(studentId, name);
+        studentManager.addStudent(student);
+        System.out.println("Student added successfully.");
+    }
+
+    private static void registerStudentForCourse() {
+        System.out.print("Enter student ID: ");
+        String studentId = scanner.nextLine();
+        System.out.print("Enter course ID: ");
+        String courseId = scanner.nextLine();
+
+        studentManager.registerCourse(studentId, courseId);
+    }
+
+    private static void dropCourseForStudent() {
+        System.out.print("Enter student ID: ");
+        String studentId = scanner.nextLine();
+        System.out.print("Enter course ID: ");
+        String courseId = scanner.nextLine();
+
+        studentManager.dropCourse(studentId, courseId);
+    }
+}
